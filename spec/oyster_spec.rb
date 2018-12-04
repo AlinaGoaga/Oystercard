@@ -3,9 +3,18 @@ require 'oyster'
 RSpec.describe Oystercard do
   let(:entry_station) { double :station }
   let(:exit_station) { double :station }
+  let(:journey) { { entry_station: entry_station, exit_station: exit_station } }
 
   it 'should return a balance of 0 when initialized' do
     expect(subject.balance).to eq 0
+  end
+
+  it 'has an empty list of journeys by default' do
+    expect(subject.journeys).to be_empty
+  end
+
+  it 'when initialized card starts not in journey' do
+    expect(subject.in_journey).to eq false
   end
 
   describe '#top_up' do
@@ -35,19 +44,6 @@ RSpec.describe Oystercard do
     end
   end
 
-  it 'stores the entry station' do
-    subject.top_up(20)
-    subject.touch_in(entry_station)
-    expect(subject.entry_station).to eq entry_station
-  end
-
-  # this is the same as the above, it's just using a string rather than the double
-  # it 'should remember entry station after touch in' do
-  #   subject.top_up(20)
-  #   subject.touch_in('Aldgate East')
-  #   expect(subject.entry_station).to eq 'Aldgate East'
-  # end
-
   describe '#touch_out' do
     it 'should set status to not in journey when the user touches out' do
       subject.top_up(20)
@@ -60,23 +56,12 @@ RSpec.describe Oystercard do
       subject.touch_in
       expect { subject.touch_out }.to change { subject.balance }.by(-Oystercard::MIN_FARE)
     end
-
-    it 'stores exit station' do
-      subject.top_up(20)
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.exit_station).to eq exit_station
-    end
-
-    it 'should set entry station to nil upon touch out' do
-      subject.top_up(20)
-      subject.touch_in
-      subject.touch_out
-      expect(subject.entry_station).to be nil
-    end
   end
 
-  it 'when initialized card starts not in journey' do
-    expect(subject.in_journey).to eq false
+  it 'registers a completed journey' do
+    subject.top_up(20)
+    subject.touch_in(entry_station)
+    subject.touch_out(exit_station)
+    expect(subject.journeys).to include(journey)
   end
 end
