@@ -13,10 +13,6 @@ RSpec.describe Oystercard do
     expect(subject.journeys).to be_empty
   end
 
-  it 'when initialized card starts not in journey' do
-    expect(subject.in_journey).to eq false
-  end
-
   describe '#top_up' do
     it 'should top up the card by the amount given' do
       expect(subject.top_up(5)).to eq 5
@@ -28,9 +24,11 @@ RSpec.describe Oystercard do
   end
 
   describe '#touch_in' do
-    it 'should set status to in journey when the user touches in' do
+    it 'should add the entry station to the journey' do
       subject.top_up(20)
-      expect(subject.touch_in).to eq true
+      subject.touch_in(entry_station)
+      journeys = subject.journeys
+      expect(journeys[:entry_station]).to eq(entry_station)
     end
 
     it 'should not let user touch in without sufficient balance' do
@@ -45,10 +43,12 @@ RSpec.describe Oystercard do
   end
 
   describe '#touch_out' do
-    it 'should set status to not in journey when the user touches out' do
+    it 'should add the exit station to the journey' do
       subject.top_up(20)
       subject.touch_in
-      expect(subject.touch_out).to eq false
+      subject.touch_out(exit_station)
+      journeys = subject.journeys
+      expect(journeys[:exit_station]).to eq(exit_station)
     end
 
     it 'should reduce the balance by the minimum fare' do
