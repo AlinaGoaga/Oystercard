@@ -29,7 +29,7 @@ class Oystercard
   private
 
   def in_journey?
-    @journeys[:entry_station] != nil
+    !@journeys[:entry_station].nil? && @journeys[:exit_station].nil?
   end
 
   def deduct(amount = MIN_FARE)
