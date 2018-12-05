@@ -27,8 +27,8 @@ RSpec.describe Oystercard do
     it 'should add the entry station to the journey' do
       subject.top_up(20)
       subject.touch_in(entry_station)
-      journeys = subject.journeys
-      expect(journeys[:entry_station]).to eq(entry_station)
+      journey = subject.journey
+      expect(journey[:entry_station]).to eq(entry_station)
     end
 
     it 'should not let user touch in without sufficient balance' do
@@ -47,8 +47,8 @@ RSpec.describe Oystercard do
       subject.top_up(20)
       subject.touch_in
       subject.touch_out(exit_station)
-      journeys = subject.journeys
-      expect(journeys[:exit_station]).to eq(exit_station)
+      journey = subject.journey
+      expect(journey[:exit_station]).to eq(exit_station)
     end
 
     it 'should reduce the balance by the minimum fare' do
@@ -62,6 +62,11 @@ RSpec.describe Oystercard do
     subject.top_up(20)
     subject.touch_in(entry_station)
     subject.touch_out(exit_station)
-    expect(subject.journeys).to include(journey)
+    expect(subject.journey).to eq(journey)
   end
+
+  # it 'saves the journey in the list of journeys' do
+  #   subject.save_journey
+  #   expect(subject.journeys).to include(journey)
+  # end
 end
