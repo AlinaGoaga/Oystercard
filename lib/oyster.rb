@@ -16,13 +16,13 @@ class Oystercard
     @balance += amount
   end
 
-  def touch_in(entry_station = 'Aldgate East')
+  def touch_in(entry_station)
     raise 'Insufficient balance. GET RICH BRO!' if @balance < MIN_FARE
     raise 'User already in journey' if in_journey?
     @journey[:entry_station] = entry_station
   end
 
-  def touch_out(exit_station = 'Blackfriars')
+  def touch_out(exit_station)
     deduct
     @journey[:exit_station] = exit_station
   end
