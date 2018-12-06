@@ -1,13 +1,15 @@
+require_relative 'journey'
+
 class Oystercard
   attr_reader :balance
-  attr_accessor :journey, :journeys
+  attr_accessor :journeys
 
   MAX_BALANCE = 90
   MIN_FARE = 1
 
-  def initialize
+  def initialize(journey = Journey.new)
     @balance = 0
-    @journey = {}
+    @journey = journey
     @journeys = []
   end
 
@@ -16,15 +18,14 @@ class Oystercard
     @balance += amount
   end
 
-  def touch_in(entry_station)
+  def touch_in(entry_station = nil)
     raise 'Insufficient balance. GET RICH BRO!' if @balance < MIN_FARE
-    raise 'User already in journey' if in_journey?
-    @journey[:entry_station] = entry_station
+    @journey.start(entry_station)
   end
 
-  def touch_out(exit_station)
+  def touch_out(exit_station = nil)
     deduct
-    @journey[:exit_station] = exit_station
+    @journey.finish(exit_station)
   end
 
   def save_journey
@@ -32,10 +33,6 @@ class Oystercard
 end
 
   private
-
-  def in_journey?
-    !@journey[:entry_station].nil? && @journey[:exit_station].nil?
-  end
 
   def deduct(amount = MIN_FARE)
     @balance -= amount
