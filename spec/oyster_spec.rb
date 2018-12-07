@@ -26,33 +26,20 @@ RSpec.describe Oystercard do
   end
 
   describe '#touch_in' do
-    # it 'should add the entry station to the journey' do
-    #   card.top_up(20)
-    #   card.touch_in(entry_station)
-    #   journey = card.journey
-    #   expect(journey[:entry_station]).to eq(entry_station)
-    # end
-
     it 'should not let user touch in without sufficient balance' do
       expect { card.touch_in }.to raise_error 'Insufficient balance. GET RICH BRO!'
     end
   end
 
-  # describe '#touch_out' do
-  #    it 'should add the exit station to the journey' do
-  #      card.top_up(20)
-  #      card.touch_in
-  #      card.touch_out(exit_station)
-  #      journey = card.journey
-  #      expect(journey[:exit_station]).to eq(exit_station)
-  #    end
-  #
-  #   it 'should reduce the balance by the minimum fare' do
-  #     # card.top_up(20)
-  #     # card.touch_in
-  #     expect { card.touch_out }.to change { card.balance }.by(-Oystercard::MIN_FARE)
-  #   end
-  # end
+  describe '#touch_out' do
+    it 'should return the completed journey' do
+      allow(journey).to receive(:start).and_return(entry_station)
+      allow(journey).to receive(:finish).and_return(journey)
+      card.top_up(20)
+      card.touch_in(entry_station)
+      expect(card.touch_out(exit_station)).to eq journey
+    end
+  end
 
   it 'saves the journey in the list of journeys' do
     card.save_journey

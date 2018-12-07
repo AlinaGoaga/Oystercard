@@ -1,5 +1,4 @@
 require 'journey'
-require 'station'
 
 RSpec.describe Journey do
   let(:entry_station) { double :station, name: 'Aldgate East', zone: 1 }
